@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Fitness Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .user {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .user h2 {
+      margin-bottom: 5px;
+    }
+
+    .user p {
+      margin: 0;
+      font-weight: bold;
+    }
+
+    ul.workouts {
+      list-style: none;
+      padding-left: 15px;
+    }
+
+    ul.workouts li {
+      background: #f0f0f0;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .back-btn {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>All User Workouts</h1>
+    <div id="userList">Loading...</div>
+    <a href="index.html" class="back-btn">← Back to Form</a>
+  </div>
+
+  <script>
+    async function fetchUserData() {
+      try {
+        const response = await fetch('http://localhost:5000/api/users_fitness_record');
+        const users = await response.json();
+
+        const userList = document.getElementById('userList');
+        userList.innerHTML = '';
+
+        if (!users.length) {
+          userList.innerText = 'No users found.';
+          return;
+        }
+
+        users.forEach(user => {
+          const userDiv = document.createElement('div');
+          userDiv.className = 'user';
+
+          const header = document.createElement('h2');
+          header.innerText = `${user.name} (Age: ${user.age})`;
+          userDiv.appendChild(header);
+
+          const workoutList = document.createElement('ul');
+          workoutList.className = 'workouts';
+
+          user.workouts.forEach(workout => {
+            const li = document.createElement('li');
+            const date = new Date(workout.timestamp).toLocaleString();
+            li.innerText = `${workout.exercise} - ${workout.duration} min [${date}]`;
+            workoutList.appendChild(li);
+          });
+
+          userDiv.appendChild(workoutList);
+          userList.appendChild(userDiv);
+        });
+      } catch (err) {
+        document.getElementById('userList').innerText = 'Failed to fetch data.';
+        console.error(err);
+      }
+    }
+
+    window.onload = fetchUserData;
+  </script>
+</body>
+</html>

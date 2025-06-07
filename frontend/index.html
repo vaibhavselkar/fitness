@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fitness Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form input, form select, form button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #responseMsg {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fitness Tracker</h1>
+    <form id="workoutForm">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="number" id="age" placeholder="Your Age" required>
+      <select id="exercise" required>
+        <option value="">Select Exercise</option>
+        <option value="Walking">Walking</option>
+        <option value="Running">Running</option>
+        <option value="Cycling">Cycling</option>
+        <option value="Yoga">Yoga</option>
+        <option value="Gym">Gym</option>
+      </select>
+      <input type="number" id="duration" placeholder="Duration (minutes)" required>
+      <button type="submit">Submit</button>
+    <div>
+        <a class="admin-btn" href="admin.html">View All Workouts →</a>
+    </div>
+    </form>
+    <div id="responseMsg"></div>
+  </div>
+
+  <script>
+    document.getElementById('workoutForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value,
+        age: parseInt(document.getElementById('age').value),
+        exercise: document.getElementById('exercise').value,
+        duration: parseInt(document.getElementById('duration').value)
+      };
+
+      try {
+        const response = await fetch('http://localhost:5000/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        document.getElementById('responseMsg').innerText = result.message || 'Submitted!';
+      } catch (error) {
+        console.error(error);
+        document.getElementById('responseMsg').innerText = 'Error submitting workout.';
+      }
+    });
+  </script>
+</body>
+</html>
