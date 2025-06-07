@@ -76,7 +76,7 @@
   <script>
     async function fetchUserData() {
       try {
-        const response = await fetch('http://localhost:5000/api/users_fitness_record');
+        const response = await fetch('https://fitness-server-umber-eight.vercel.app/api/users_fitness_record');
         const users = await response.json();
 
         const userList = document.getElementById('userList');
