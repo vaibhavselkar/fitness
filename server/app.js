@@ -2,25 +2,32 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const auth= require('./routes/auth');
+const workoutRoutes = require('./routes/workoutRoutes');
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Health check / root route
 app.get('/', (req, res) => {
   res.send('Welcome to the Fitness Tracker Server');
 });
 
-app.use('/api', auth);
+// Routes
+app.use('/api/workouts', workoutRoutes);
 
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+    console.log('✅ Connected to MongoDB');
   })
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err.message);
+  });
+
+// Export for Vercel
+module.exports = app;
